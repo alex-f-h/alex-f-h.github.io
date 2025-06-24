@@ -9,29 +9,37 @@
   <style>
     body { background: #fafafa; }
     .item-row { align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;}
-    .btn-icon-main {
-      width: 44px; height: 44px; border-radius: 10px;
-      padding: 0; display: flex; align-items: center; justify-content: center;
+    .btn-icon { display: flex; align-items: center; justify-content: center; border-radius: 8px; padding: 0; }
+    .btn-add {
+      width: 46px; height: 46px;
+      background: #e3f2fd;
     }
-    .btn-icon-remove {
-      width: 28px; height: 28px; border-radius: 7px;
-      padding: 0; display: flex; align-items: center; justify-content: center;
+    .btn-add .material-icons {
+      font-size: 2.3rem; /* ícone grande */
     }
-    .btn-add { background: #e3f2fd; }
-    .btn-remove { background: #fbe9e7; }
+    .btn-remove {
+      width: 32px; height: 32px;
+      background: #fbe9e7;
+      margin-right: 8px;
+    }
+    .btn-remove .material-icons {
+      font-size: 1.5rem;
+    }
     .btn-add:active, .btn-remove:active { box-shadow: 0 0 0 2px #bdbdbd inset; }
     .counter-badge { min-width: 28px; display: inline-block; text-align: center; }
-    .icon-size-main { font-size: 32px !important; }
-    .icon-size-remove { font-size: 20px !important; }
     @media (max-width: 600px) {
       .item-row > span { font-size: 1rem !important; }
       .counter-badge { min-width: 22px; }
+      .btn-add { width: 40px; height: 40px; }
+      .btn-add .material-icons { font-size: 2rem; }
+      .btn-remove { width: 26px; height: 26px; }
+      .btn-remove .material-icons { font-size: 1.15rem; }
     }
   </style>
 </head>
 <body>
   <div class="container" style="max-width:420px;margin-top:2rem;margin-bottom:2rem;">
-    <h3 class="mb-3 text-center">Comanda Digital</h3>
+    <h3 class="mb-3 text-center">Comanda Maha Pizza</h3>
     <div id="itens-comanda"></div>
     <div class="d-flex justify-content-between align-items-center mt-3">
       <button class="btn btn-outline-secondary" id="btn-limpar">
@@ -42,19 +50,19 @@
   </div>
   <script>
     const itens = [
-      { nome: "Pizza", preco: R$15, icone: "local_pizza" },
-      { nome: "Água", preco: R$6, icone: "opacity" },
-      { nome: "Coca Original", preco: R$8, icone: "local_drink" },
-      { nome: "Coca Zero", preco: R$8, icone: "emoji_food_beverage" },
-      { nome: "Brigadeiro", preco: R$8, icone: "cookie" },
-      { nome: "Torta de Limão", preco: R$15, icone: "cake" },
-      { nome: "Café", preco: R$8, icone: "coffee" }
+      { nome: "Pizza", preco: 15, icone: "local_pizza" },
+      { nome: "Água", preco: 6, icone: "opacity" },
+      { nome: "Coca Original", preco: 8, icone: "local_drink" },
+      { nome: "Coca Zero", preco: 8, icone: "emoji_food_beverage" },
+      { nome: "Brigadeiro", preco: 8, icone: "cookie" },
+      { nome: "Torta de Limão", preco: 15, icone: "cake" },
+      { nome: "Café", preco: 8, icone: "coffee" }
     ];
 
     let contadores = Array(itens.length).fill(0);
 
-    function formatarInteiro(valor) {
-      return parseInt(valor, 10);
+    function formatarValor(valor) {
+      return Math.round(valor).toString();
     }
 
     function renderizarItens() {
@@ -64,16 +72,16 @@
         const linha = document.createElement("div");
         linha.className = "row item-row";
         linha.innerHTML = `
-          <div class="col-3 d-flex align-items-center">
-            <button class="btn btn-remove btn-icon-remove me-1" data-idx="${idx}" title="Remover">
-              <span class="material-icons icon-size-remove">remove</span>
+          <div class="col-3 d-flex">
+            <button class="btn btn-remove btn-icon me-1" data-idx="${idx}" title="Remover">
+              <span class="material-icons">remove</span>
             </button>
-            <button class="btn btn-add btn-icon-main" data-idx="${idx}" title="Adicionar">
-              <span class="material-icons icon-size-main">${item.icone}</span>
+            <button class="btn btn-add btn-icon" data-idx="${idx}" title="Adicionar">
+              <span class="material-icons">${item.icone}</span>
             </button>
           </div>
           <span class="col-5" style="font-size:1.08em;">${item.nome}</span>
-          <span class="col-2 text-end" style="font-size:1.08em;">${formatarInteiro(item.preco)}</span>
+          <span class="col-2 text-end" style="font-size:1.08em;">R$ ${formatarValor(item.preco)}</span>
           <span class="col-2 counter-badge" id="contador-${idx}">${contadores[idx]}</span>
         `;
         container.appendChild(linha);
@@ -85,7 +93,7 @@
       contadores.forEach((quant, idx) => {
         total += quant * itens[idx].preco;
       });
-      document.getElementById("total-geral").textContent = formatarInteiro(total);
+      document.getElementById("total-geral").textContent = formatarValor(total);
     }
 
     document.addEventListener("DOMContentLoaded", () => {

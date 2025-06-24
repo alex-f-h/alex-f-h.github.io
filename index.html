@@ -9,14 +9,17 @@
   <style>
     body { background: #fafafa; }
     .item-row { align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;}
-    .btn-icon { width: 38px; height: 38px; border-radius: 8px; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .btn-icon { width: 42px; height: 42px; border-radius: 8px; padding: 0; display: flex; align-items: center; justify-content: center; }
     .btn-add { background: #e3f2fd; }
     .btn-remove { background: #fbe9e7; }
     .btn-add:active, .btn-remove:active { box-shadow: 0 0 0 2px #bdbdbd inset; }
+    .material-icons { font-size: 2.1em !important; }
     .counter-badge { min-width: 28px; display: inline-block; text-align: center; }
     @media (max-width: 600px) {
       .item-row > span { font-size: 1rem !important; }
       .counter-badge { min-width: 22px; }
+      .material-icons { font-size: 1.7em !important; }
+      .btn-icon { width: 34px; height: 34px;}
     }
   </style>
 </head>
@@ -28,25 +31,21 @@
       <button class="btn btn-outline-secondary" id="btn-limpar">
         <span class="material-icons" style="vertical-align:-6px;">refresh</span> Limpar tudo
       </button>
-      <div style="font-size:1.2em;"><b>Total:</b> R$ <span id="total-geral">0,00</span></div>
+      <div style="font-size:1.2em;"><b>Total:</b> R$ <span id="total-geral">0</span></div>
     </div>
   </div>
   <script>
     const itens = [
-      { nome: "Pizza de Marguerita", preco: 15.00, icone: "local_pizza" },
-      { nome: "Água", preco: 6.00, icone: "opacity" },
-      { nome: "Coca Original", preco: 8.00, icone: "local_drink" },
-      { nome: "Coca Zero", preco: 8.00, icone: "local_drink" },
-      { nome: "Brigadeiro", preco: 8.00, icone: "cookie" },       // Brigadeiro = cookie
-      { nome: "Torta de Limão", preco: 15.00, icone: "cake" },    // Torta de Limão = cake
-      { nome: "Café", preco: 8.00, icone: "coffee" }
+      { nome: "Pizza", preco: 8, icone: "local_pizza" },
+      { nome: "Água", preco: 8, icone: "opacity" },
+      { nome: "Coca Original", preco: 8, icone: "local_drink" },
+      { nome: "Coca Zero", preco: 8, icone: "emoji_food_beverage" },
+      { nome: "Brigadeiro", preco: 8, icone: "cookie" },
+      { nome: "Torta de Limão", preco: 8, icone: "cake" },
+      { nome: "Café", preco: 8, icone: "coffee" }
     ];
 
     let contadores = Array(itens.length).fill(0);
-
-    function formatarReal(valor) {
-      return valor.toFixed(2).replace('.', ',');
-    }
 
     function renderizarItens() {
       const container = document.getElementById("itens-comanda");
@@ -64,7 +63,7 @@
             </button>
           </div>
           <span class="col-5" style="font-size:1.08em;">${item.nome}</span>
-          <span class="col-2 text-end" style="font-size:1.08em;">R$ ${formatarReal(item.preco)}</span>
+          <span class="col-2 text-end" style="font-size:1.08em;">R$ ${item.preco}</span>
           <span class="col-2 counter-badge" id="contador-${idx}">${contadores[idx]}</span>
         `;
         container.appendChild(linha);
@@ -76,7 +75,7 @@
       contadores.forEach((quant, idx) => {
         total += quant * itens[idx].preco;
       });
-      document.getElementById("total-geral").textContent = formatarReal(total);
+      document.getElementById("total-geral").textContent = total;
     }
 
     document.addEventListener("DOMContentLoaded", () => {

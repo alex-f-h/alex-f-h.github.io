@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Comanda Interativa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    body {
+      background: #fafafa;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+    .comanda-box {
+      max-width: 370px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 2px 12px #0001;
+      padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+    }
+    .item-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 13px;
+      gap: 3px;
+    }
+    .btn-remover {
+      width: 36px;
+      height: 36px;
+      margin-right: 3px;
+      border: none;
+      background: #ffeaea;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 1px 1px 3px #eee;
+      transition: background 0.2s;
+    }
+    .btn-remover:hover {
+      background: #ffc9c9;
+    }
+    .btn-adicionar {
+      width: 36px;
+      height: 36px;
+      margin-right: 8px;
+      border: none;
+      background: #e3f2fd;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 1px 1px 3px #eee;
+      transition: background 0.2s;
+    }
+    .btn-adicionar:hover {
+      background: #bbdefb;
+    }
+    .item-nome {
+      flex: 1 1 0;
+      min-width: 92px;
+    }
+    .item-preco {
+      min-width: 49px;
+      text-align: right;
+      margin-right: 8px;
+      font-variant-numeric: tabular-nums;
+    }
+    .item-contador {
+      font-weight: bold;
+      min-width: 22px;
+      text-align: center;
+      font-size: 1.12em;
+      color: #1976d2;
+    }
+    .total-area {
+      font-size: 1.2em;
+      text-align: right;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="comanda-box">
+    <div id="itens-comanda"></div>
+    <hr>
+    <div class="total-area">
+      <b>Total:</b> R$ <span id="total-geral">0,00</span>
+    </div>
+  </div>
+  <script>
+    const itens = [
+      { nome: "Pizza de Marguerita", preco: 15.00, icone: "local_pizza" },
+      { nome: "Água", preco: 6.00, icone: "opacity" },
+      { nome: "Coca Original", preco: 8.00, icone: "local_drink" },
+      { nome: "Coca Zero", preco: 8.00, icone: "emoji_food_beverage" },
+      { nome: "Brigadeiro", preco: 8.00, icone: "cake" },
+      { nome: "Torta de Limão", preco: 15.00, icone: "bakery_dining" },
+      { nome: "Café", preco: 8.00, icone: "coffee" }
+    ];
+
+    let contadores = Array(itens.length).fill(0);
+
+    function formatarReal(valor) {
+      return valor.toFixed(2).replace('.', ',');
+    }
+
+    function renderizarItens() {
+      const container = document.getElementById("itens-comanda");
+      container.innerHTML = "";
+      itens.forEach((item, idx) => {
+        const linha = document.createElement("div");
+        linha.className = "item-row";
+        linha.innerHTML = `
+          <button class="btn-remover" data-idx="${idx}">
+            <span class="material-icons">remove</span>
+          </button>
+          <button class="btn-adicionar" data-idx="${idx}">
+            <span class="material-icons">${item.icone}</span>
+          </button>
+          <span class="item-nome">${item.nome}</span>
+          <span class="item-preco">R$ ${formatarReal(item.preco)}</span>
+          <span class="item-contador" id="contador-${idx}">${contadores[idx]}</span>
+        `;
+        container.appendChild(linha);
+      });
+    }
+
+    function atualizarTotal() {
+      let total = 0;
+      contadores.forEach((quant, idx) => {
+        total += quant * itens[idx].preco;
+      });
+      document.getElementById("total-geral").textContent = formatarReal(total);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderizarItens();
+      atualizarTotal();
+      document.getElementById("itens-comanda").addEventListener("click", function (e) {
+        const adicionar = e.target.closest(".btn-adicionar");
+        const remover = e.target.closest(".btn-remover");
+        if (adicionar) {
+          const idx = parseInt(adicionar.getAttribute("data-idx"));
+          contadores[idx]++;
+          document.getElementById(`contador-${idx}`).textContent = contadores[idx];
+          atualizarTotal();
+        }
+        if (remover) {
+          const idx = parseInt(remover.getAttribute("data-idx"));
+          if (contadores[idx] > 0) {
+            contadores[idx]--;
+            document.getElementById(`contador-${idx}`).textContent = contadores[idx];
+            atualizarTotal();
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>

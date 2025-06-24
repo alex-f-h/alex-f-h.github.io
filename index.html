@@ -9,13 +9,28 @@
   <style>
     body { background: #fafafa; }
     .item-row { align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;}
-    .btn-icon { display: flex; align-items: center; justify-content: center; border-radius: 8px; padding: 0; }
-    .btn-add {
-      width: 60px; height: 60px;
+    .btn-item {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 10px;
+      border-radius: 12px;
       background: #e3f2fd;
+      border: none;
+      width: 100%;
+      min-height: 52px;
+      padding: 6px 8px 6px 8px;
+      font-size: 1.09em;
+      font-weight: 500;
+      color: #222;
+      transition: background 0.15s;
+      cursor: pointer;
     }
-    .btn-add .material-icons {
-      font-size: 2.3rem;
+    .btn-item:active { background: #bbdefb; }
+    .btn-item .material-icons {
+      font-size: 2.2rem;
+      vertical-align: middle;
+      color: #1976d2;
     }
     .counter-badge {
       min-width: 28px; display: inline-block; text-align: center;
@@ -33,15 +48,14 @@
       background: #ce93d8;
     }
     @media (max-width: 600px) {
-      .item-row > span { font-size: 1rem !important; }
+      .btn-item { font-size: 1em; min-height: 44px; padding: 4px 5px; }
+      .btn-item .material-icons { font-size: 1.6rem; }
       .counter-badge { min-width: 22px; }
-      .btn-add { width: 40px; height: 40px; }
-      .btn-add .material-icons { font-size: 2rem; }
     }
   </style>
 </head>
 <body>
-  <div class="container" style="max-width:420px;margin-top:2rem;margin-bottom:2rem;">
+  <div class="container" style="max-width:430px;margin-top:2rem;margin-bottom:2rem;">
     <h3 class="mb-3 text-center">Comanda Maha Pizza</h3>
     <div id="itens-comanda"></div>
     <div class="d-flex justify-content-between align-items-center mt-3">
@@ -56,7 +70,7 @@
       { nome: "Pizza", preco: 15, icone: "local_pizza" },
       { nome: "Água", preco: 6, icone: "opacity" },
       { nome: "Coca Original", preco: 8, icone: "local_drink" },
-      { nome: "Coca Zero", preco: 8, icone: "emoji_food_beverage" },
+      { nome: "Coca Zero", preco: 8, icone: "local_drink" },
       { nome: "Brigadeiro", preco: 8, icone: "cookie" },
       { nome: "Torta de Limão", preco: 15, icone: "cake" },
       { nome: "Café", preco: 8, icone: "coffee" }
@@ -76,13 +90,13 @@
         const linha = document.createElement("div");
         linha.className = "row item-row";
         linha.innerHTML = `
-          <div class="col-3 d-flex">
-            <button class="btn btn-add btn-icon" data-idx="${idx}" title="Adicionar">
+          <div class="col-7 pe-0">
+            <button class="btn-item" data-idx="${idx}" title="Adicionar">
               <span class="material-icons">${item.icone}</span>
+              <span>${item.nome}</span>
             </button>
           </div>
-          <span class="col-5" style="font-size:1.08em;">${item.nome}</span>
-          <span class="col-2 text-end" style="font-size:1.08em;">
+          <span class="col-3 text-end" style="font-size:1.08em;">
             R$ ${formatarValor(item.preco)}
           </span>
           <span class="col-2 ps-0">
@@ -108,10 +122,10 @@
       atualizarTotal();
 
       document.getElementById("itens-comanda").addEventListener("click", function (e) {
-        const btnAdd = e.target.closest(".btn-add");
+        const btnItem = e.target.closest(".btn-item");
         const badge = e.target.closest(".counter-badge");
-        if (btnAdd) {
-          const idx = parseInt(btnAdd.getAttribute("data-idx"));
+        if (btnItem) {
+          const idx = parseInt(btnItem.getAttribute("data-idx"));
           contadores[idx]++;
           renderizarItens();
           atualizarTotal();

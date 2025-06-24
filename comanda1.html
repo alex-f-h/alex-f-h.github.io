@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Comanda Rápida</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Google Material Icons -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      font-family: 'Inter', Arial, sans-serif;
+    }
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: stretch;
+    }
+    .grade-comanda {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5vw;
+      padding: 8vw 7vw 0 7vw;
+      flex: 1 1 auto;
+    }
+    .btn-cardapio {
+      background: #dbdbdb;
+      border: none;
+      border-radius: 8px;
+      width: 40vw;
+      max-width: 165px;
+      aspect-ratio: 1/1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.3em;
+      box-shadow: 0 1px 4px #0001;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.14s;
+      user-select: none;
+    }
+    .btn-cardapio:active {
+      background: #b0b0b0;
+    }
+    .contador-badge {
+      position: absolute;
+      bottom: 10px;
+      right: 12px;
+      background: #1976d2;
+      color: #fff;
+      border-radius: 1em;
+      font-size: 0.82em;
+      min-width: 1.5em;
+      min-height: 1.5em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.38em;
+      font-weight: bold;
+      box-shadow: 0 2px 5px #0002;
+      pointer-events: none;
+    }
+    .comanda-total {
+      width: 100vw;
+      text-align: center;
+      padding: 8vw 0 2vw 0;
+      font-size: 2.1em;
+      font-weight: bold;
+      letter-spacing: -0.01em;
+    }
+    .btn-limpar {
+      display: block;
+      margin: 0 auto 4vw auto;
+      background: none;
+      border: none;
+      color: #222;
+      font-size: 1.35em;
+      font-family: inherit;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0.95;
+      padding: 0.7em 1.2em;
+      border-radius: 6px;
+      transition: background 0.14s, color 0.1s;
+    }
+    .btn-limpar:active {
+      background: #eee;
+      color: #000;
+    }
+    @media (min-width: 520px) {
+      .grade-comanda {
+        gap: 18px;
+        padding: 38px 0 0 0;
+        justify-content: center;
+      }
+      .btn-cardapio {
+        max-width: 155px;
+        font-size: 2.5em;
+      }
+      .comanda-total {
+        font-size: 2.2em;
+        padding-top: 48px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="grade-comanda" id="grade-comanda">
+    <!-- Botões serão inseridos via JS -->
+  </div>
+  <div class="comanda-total">
+    R$ <span id="total-geral">0,00</span>
+  </div>
+  <button class="btn-limpar" id="btn-limpar">Limpar comanda</button>
+
+  <script>
+    // Itens do cardápio (adicione mais se quiser! Máximo: 8)
+    const itens = [
+      { nome: "Pizza de Marguerita", preco: 15.00, icone: "local_pizza" },
+      { nome: "Água", preco: 6.00, icone: "opacity" },
+      { nome: "Coca Original", preco: 8.00, icone: "local_drink" },
+      { nome: "Coca Zero", preco: 8.00, icone: "emoji_food_beverage" },
+      { nome: "Brigadeiro", preco: 8.00, icone: "cake" },
+      { nome: "Torta de Limão", preco: 15.00, icone: "nutrition" },
+      { nome: "Café", preco: 8.00, icone: "coffee" },
+      { nome: "Torrada", preco: 7.00, icone: "restaurant" } // 8º item só para fechar a grade, pode trocar!
+    ];
+    let contadores = Array(itens.length).fill(0);
+
+    function formatarReal(valor) {
+      return valor.toFixed(2).replace('.', ',');
+    }
+
+    function renderizarGrade() {
+      const grade = document.getElementById("grade-comanda");
+      grade.innerHTML = "";
+      itens.forEach((item, idx) => {
+        const btn = document.createElement("button");
+        btn.className = "btn-cardapio";
+        btn.setAttribute("data-idx", idx);
+        btn.setAttribute("title", `${item.nome} (R$ ${formatarReal(item.preco)})`);
+        btn.innerHTML = `
+          <span class="material-icons">${item.icone}</span>
+          ${contadores[idx] > 0 ? `<span class="contador-badge">${contadores[idx]}</span>` : ''}
+        `;
+        grade.appendChild(btn);
+      });
+    }
+
+    function atualizarTotal() {
+      let total = 0;
+      contadores.forEach((qtd, idx) => {
+        total += qtd * itens[idx].preco;
+      });
+      document.getElementById("total-geral").textContent = formatarReal(total);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      renderizarGrade();
+      atualizarTotal();
+
+      document.getElementById("grade-comanda").addEventListener("click", function(e) {
+        const btn = e.target.closest(".btn-cardapio");
+        if (btn) {
+          const idx = parseInt(btn.getAttribute("data-idx"));
+          contadores[idx]++;
+          renderizarGrade();
+          atualizarTotal();
+        }
+      });
+
+      // Remover item ao segurar (toque longo) — opcional e mobile-friendly
+      let holdTimer = null;
+      document.getElementById("grade-comanda").addEventListener("touchstart", function(e) {
+        const btn = e.target.closest(".btn-cardapio");
+        if (btn) {
+          holdTimer = setTimeout(() => {
+            const idx = parseInt(btn.getAttribute("data-idx"));
+            if (contadores[idx] > 0) {
+              contadores[idx]--;
+              renderizarGrade();
+              atualizarTotal();
+            }
+          }, 480); // 0,48s de toque longo para remover
+        }
+      });
+      document.getElementById("grade-comanda").addEventListener("touchend", function() {
+        clearTimeout(holdTimer);
+      });
+      document.getElementById("grade-comanda").addEventListener("touchmove", function() {
+        clearTimeout(holdTimer);
+      });
+
+      // Limpar comanda
+      document.getElementById("btn-limpar").addEventListener("click", function() {
+        contadores = Array(itens.length).fill(0);
+        renderizarGrade();
+        atualizarTotal();
+      });
+    });
+  </script>
+</body>
+</html>

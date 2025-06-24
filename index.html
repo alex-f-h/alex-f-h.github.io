@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8">
   <title>Comanda Interativa</title>
@@ -9,84 +9,85 @@
   <style>
     body {
       background: #fafafa;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
     }
-    .comanda-box {
-      max-width: 370px;
+    .container {
+      max-width: 400px;
       margin: 2rem auto;
+      padding: 1.2rem;
       background: #fff;
       border-radius: 14px;
-      box-shadow: 0 2px 12px #0001;
-      padding: 1.5rem 1.2rem 1.2rem 1.2rem;
+      box-shadow: 0 2px 10px #0001;
     }
     .item-row {
       display: flex;
       align-items: center;
-      margin-bottom: 13px;
-      gap: 3px;
+      margin-bottom: 16px;
+      gap: 0.2rem;
     }
-    .btn-remover {
-      width: 36px;
-      height: 36px;
-      margin-right: 3px;
+    .btn-remover, .btn-adicionar {
+      width: 38px;
+      height: 38px;
       border: none;
-      background: #ffeaea;
-      border-radius: 8px;
+      border-radius: 7px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       box-shadow: 1px 1px 3px #eee;
+      font-size: 1.6em;
+      background: #fbe9e7;
       transition: background 0.2s;
     }
-    .btn-remover:hover {
-      background: #ffc9c9;
-    }
+    .btn-remover:active { background: #ffcccb; }
     .btn-adicionar {
-      width: 36px;
-      height: 36px;
-      margin-right: 8px;
-      border: none;
       background: #e3f2fd;
-      border-radius: 8px;
-      cursor: pointer;
-      box-shadow: 1px 1px 3px #eee;
-      transition: background 0.2s;
+      margin-right: 6px;
     }
-    .btn-adicionar:hover {
-      background: #bbdefb;
-    }
+    .btn-adicionar:active { background: #b3e5fc; }
     .item-nome {
       flex: 1 1 0;
-      min-width: 92px;
+      min-width: 70px;
+      font-size: 1em;
+      margin-right: 0.5em;
     }
     .item-preco {
-      min-width: 49px;
+      min-width: 52px;
       text-align: right;
-      margin-right: 8px;
-      font-variant-numeric: tabular-nums;
+      font-size: 1em;
+      margin-right: 7px;
     }
     .item-contador {
       font-weight: bold;
-      min-width: 22px;
+      min-width: 28px;
       text-align: center;
-      font-size: 1.12em;
+      font-size: 1em;
       color: #1976d2;
     }
     .total-area {
       font-size: 1.2em;
       text-align: right;
-      padding-top: 8px;
+      padding-top: 1rem;
+      font-weight: 500;
+    }
+    @media (max-width: 520px) {
+      .container { max-width: 98vw; padding: 2vw; }
+      .item-row { font-size: 1em; }
     }
   </style>
 </head>
 <body>
-  <div class="comanda-box">
+  <div class="container">
+    <h2 style="text-align:center; font-weight:600; letter-spacing:0.02em; margin-bottom:1rem;">Comanda Interativa</h2>
     <div id="itens-comanda"></div>
     <hr>
     <div class="total-area">
       <b>Total:</b> R$ <span id="total-geral">0,00</span>
     </div>
   </div>
+
   <script>
     const itens = [
       { nome: "Pizza de Marguerita", preco: 15.00, icone: "local_pizza" },
@@ -94,7 +95,7 @@
       { nome: "Coca Original", preco: 8.00, icone: "local_drink" },
       { nome: "Coca Zero", preco: 8.00, icone: "emoji_food_beverage" },
       { nome: "Brigadeiro", preco: 8.00, icone: "cake" },
-      { nome: "Torta de Limão", preco: 15.00, icone: "bakery_dining" },
+      { nome: "Torta de Limão", preco: 15.00, icone: "nutrition" }, // Alterado aqui!
       { nome: "Café", preco: 8.00, icone: "coffee" }
     ];
 
@@ -111,10 +112,10 @@
         const linha = document.createElement("div");
         linha.className = "item-row";
         linha.innerHTML = `
-          <button class="btn-remover" data-idx="${idx}">
+          <button class="btn-remover" data-idx="${idx}" aria-label="Remover ${item.nome}">
             <span class="material-icons">remove</span>
           </button>
-          <button class="btn-adicionar" data-idx="${idx}">
+          <button class="btn-adicionar" data-idx="${idx}" aria-label="Adicionar ${item.nome}">
             <span class="material-icons">${item.icone}</span>
           </button>
           <span class="item-nome">${item.nome}</span>

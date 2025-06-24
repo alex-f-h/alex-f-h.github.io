@@ -9,17 +9,23 @@
   <style>
     body { background: #fafafa; }
     .item-row { align-items: center; padding: 0.5rem 0; border-bottom: 1px solid #eee;}
-    .btn-icon { width: 42px; height: 42px; border-radius: 8px; padding: 0; display: flex; align-items: center; justify-content: center; }
+    .btn-icon-main {
+      width: 44px; height: 44px; border-radius: 10px;
+      padding: 0; display: flex; align-items: center; justify-content: center;
+    }
+    .btn-icon-remove {
+      width: 28px; height: 28px; border-radius: 7px;
+      padding: 0; display: flex; align-items: center; justify-content: center;
+    }
     .btn-add { background: #e3f2fd; }
     .btn-remove { background: #fbe9e7; }
     .btn-add:active, .btn-remove:active { box-shadow: 0 0 0 2px #bdbdbd inset; }
-    .material-icons { font-size: 2.1em !important; }
     .counter-badge { min-width: 28px; display: inline-block; text-align: center; }
+    .icon-size-main { font-size: 32px !important; }
+    .icon-size-remove { font-size: 20px !important; }
     @media (max-width: 600px) {
       .item-row > span { font-size: 1rem !important; }
       .counter-badge { min-width: 22px; }
-      .material-icons { font-size: 1.7em !important; }
-      .btn-icon { width: 34px; height: 34px;}
     }
   </style>
 </head>
@@ -36,16 +42,20 @@
   </div>
   <script>
     const itens = [
-      { nome: "Pizza", preco: 8, icone: "local_pizza" },
-      { nome: "Água", preco: 8, icone: "opacity" },
-      { nome: "Coca Original", preco: 8, icone: "local_drink" },
-      { nome: "Coca Zero", preco: 8, icone: "emoji_food_beverage" },
-      { nome: "Brigadeiro", preco: 8, icone: "cookie" },
-      { nome: "Torta de Limão", preco: 8, icone: "cake" },
-      { nome: "Café", preco: 8, icone: "coffee" }
+      { nome: "Pizza", preco: R$15, icone: "local_pizza" },
+      { nome: "Água", preco: R$6, icone: "opacity" },
+      { nome: "Coca Original", preco: R$8, icone: "local_drink" },
+      { nome: "Coca Zero", preco: R$8, icone: "emoji_food_beverage" },
+      { nome: "Brigadeiro", preco: R$8, icone: "cookie" },
+      { nome: "Torta de Limão", preco: R$15, icone: "cake" },
+      { nome: "Café", preco: R$8, icone: "coffee" }
     ];
 
     let contadores = Array(itens.length).fill(0);
+
+    function formatarInteiro(valor) {
+      return parseInt(valor, 10);
+    }
 
     function renderizarItens() {
       const container = document.getElementById("itens-comanda");
@@ -54,16 +64,16 @@
         const linha = document.createElement("div");
         linha.className = "row item-row";
         linha.innerHTML = `
-          <div class="col-3 d-flex">
-            <button class="btn btn-remove btn-icon me-1" data-idx="${idx}" title="Remover">
-              <span class="material-icons">remove</span>
+          <div class="col-3 d-flex align-items-center">
+            <button class="btn btn-remove btn-icon-remove me-1" data-idx="${idx}" title="Remover">
+              <span class="material-icons icon-size-remove">remove</span>
             </button>
-            <button class="btn btn-add btn-icon" data-idx="${idx}" title="Adicionar">
-              <span class="material-icons">${item.icone}</span>
+            <button class="btn btn-add btn-icon-main" data-idx="${idx}" title="Adicionar">
+              <span class="material-icons icon-size-main">${item.icone}</span>
             </button>
           </div>
           <span class="col-5" style="font-size:1.08em;">${item.nome}</span>
-          <span class="col-2 text-end" style="font-size:1.08em;">R$ ${item.preco}</span>
+          <span class="col-2 text-end" style="font-size:1.08em;">${formatarInteiro(item.preco)}</span>
           <span class="col-2 counter-badge" id="contador-${idx}">${contadores[idx]}</span>
         `;
         container.appendChild(linha);
@@ -75,7 +85,7 @@
       contadores.forEach((quant, idx) => {
         total += quant * itens[idx].preco;
       });
-      document.getElementById("total-geral").textContent = total;
+      document.getElementById("total-geral").textContent = formatarInteiro(total);
     }
 
     document.addEventListener("DOMContentLoaded", () => {

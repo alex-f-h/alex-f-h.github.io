@@ -15,25 +15,28 @@
       background: #e3f2fd;
     }
     .btn-add .material-icons {
-      font-size: 2.3rem; /* ícone grande */
+      font-size: 2.3rem;
     }
-    .btn-remove {
-      width: 32px; height: 32px;
-      background: #fbe9e7;
-      margin-right: 8px;
+    .counter-badge {
+      min-width: 28px; display: inline-block; text-align: center;
+      background: #e1bee7;
+      color: #311b92;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-left: 10px;
+      transition: background 0.2s;
+      user-select: none;
     }
-    .btn-remove .material-icons {
-      font-size: 1.5rem;
+    .counter-badge:hover, .counter-badge:active {
+      background: #ce93d8;
     }
-    .btn-add:active, .btn-remove:active { box-shadow: 0 0 0 2px #bdbdbd inset; }
-    .counter-badge { min-width: 28px; display: inline-block; text-align: center; }
     @media (max-width: 600px) {
       .item-row > span { font-size: 1rem !important; }
       .counter-badge { min-width: 22px; }
       .btn-add { width: 40px; height: 40px; }
       .btn-add .material-icons { font-size: 2rem; }
-      .btn-remove { width: 26px; height: 26px; }
-      .btn-remove .material-icons { font-size: 1.15rem; }
     }
   </style>
 </head>
@@ -69,20 +72,24 @@
       const container = document.getElementById("itens-comanda");
       container.innerHTML = "";
       itens.forEach((item, idx) => {
+        const contadorAtual = contadores[idx];
         const linha = document.createElement("div");
         linha.className = "row item-row";
         linha.innerHTML = `
           <div class="col-3 d-flex">
-            <button class="btn btn-remove btn-icon me-1" data-idx="${idx}" title="Remover">
-              <span class="material-icons">remove</span>
-            </button>
             <button class="btn btn-add btn-icon" data-idx="${idx}" title="Adicionar">
               <span class="material-icons">${item.icone}</span>
             </button>
           </div>
           <span class="col-5" style="font-size:1.08em;">${item.nome}</span>
-          <span class="col-2 text-end" style="font-size:1.08em;">R$ ${formatarValor(item.preco)}</span>
-          <span class="col-2 counter-badge" id="contador-${idx}">${contadores[idx]}</span>
+          <span class="col-2 text-end" style="font-size:1.08em;">
+            R$ ${formatarValor(item.preco)}
+          </span>
+          <span class="col-2 ps-0">
+            <span class="counter-badge" id="contador-${idx}" data-idx="${idx}" ${contadorAtual === 0 ? 'style="visibility:hidden"' : ""}>
+              ${contadorAtual}
+            </span>
+          </span>
         `;
         container.appendChild(linha);
       });
@@ -102,18 +109,18 @@
 
       document.getElementById("itens-comanda").addEventListener("click", function (e) {
         const btnAdd = e.target.closest(".btn-add");
-        const btnRemove = e.target.closest(".btn-remove");
+        const badge = e.target.closest(".counter-badge");
         if (btnAdd) {
           const idx = parseInt(btnAdd.getAttribute("data-idx"));
           contadores[idx]++;
-          document.getElementById(`contador-${idx}`).textContent = contadores[idx];
+          renderizarItens();
           atualizarTotal();
         }
-        if (btnRemove) {
-          const idx = parseInt(btnRemove.getAttribute("data-idx"));
+        if (badge) {
+          const idx = parseInt(badge.getAttribute("data-idx"));
           if (contadores[idx] > 0) {
             contadores[idx]--;
-            document.getElementById(`contador-${idx}`).textContent = contadores[idx];
+            renderizarItens();
             atualizarTotal();
           }
         }
